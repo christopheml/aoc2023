@@ -3,59 +3,34 @@ package fr.christopheml.aoc2023.day01
 import fr.christopheml.aoc2023.common.runners.Solution
 import fr.christopheml.aoc2023.common.Input
 
-class Calibration: Solution<Int>(1) {
+class Calibration : Solution<Int>(1) {
 
-    private val textNumbers = listOf("one", "two", "three", "four", "five", "six", "seven", "eight", "nine")
+    private val literals = listOf("one", "two", "three", "four", "five", "six", "seven", "eight", "nine")
         .mapIndexed { index, number -> number to index + 1 }
         .toMap()
 
     override fun partOne(input: Input): Int {
-        return input.multi
-            .asSequence()
-            .map { digitize(it) }
+        return input.multi.asSequence()
+            .map { findDigit(it, it.indices) * 10 + findDigit(it, it.indices.reversed()) }
             .sum()
     }
 
     override fun partTwo(input: Input): Int {
-        return input.multi
-            .asSequence()
-            .map { digitizeWithText(it) }
+        return input.multi.asSequence()
+            .map {findDigit(it, it.indices, literals) * 10 + findDigit(it, it.indices.reversed(), literals) }
             .sum()
     }
 
-    private fun digitize(input: String): Int {
-        val digits = input.filter { it.isDigit() }
-        return digits.first().digitToInt() * 10 + digits.last().digitToInt()
-    }
-
-    private fun digitizeWithText(input: String): Int {
-        return firstDigit(input) * 10 + lastDigit(input)
-    }
-
-    private fun firstDigit(input: String): Int {
-        for (i in input.indices) {
-            val digit = getDigit(input, i)
-            if (digit != null) return digit
+    private fun findDigit(input: String, indices: IntProgression, numbersMapping: Map<String, Int> = emptyMap()): Int {
+        for (i in indices) {
+            if (input[i].isDigit()) {
+                return input[i].digitToInt()
+            }
+            numbersMapping.keys.forEach {
+                if (input.startsWith(it, i)) return numbersMapping[it]!!
+            }
         }
         throw IllegalStateException()
-    }
-
-    private fun lastDigit(input: String): Int {
-        for (i in input.indices.reversed()) {
-            val digit = getDigit(input, i)
-            if (digit != null) return digit
-        }
-        throw IllegalStateException()
-    }
-
-    private fun getDigit(input: String, index: Int): Int? {
-        if (input[index].isDigit()) {
-            return input[index].digitToInt()
-        }
-        textNumbers.keys.forEach {
-            if (input.startsWith(it, index)) return textNumbers[it]
-        }
-        return null
     }
 
 }
