@@ -1,4 +1,4 @@
-package com.github.christopheml.aoc2022.common.runners
+package fr.christopheml.aoc2023.common.runners
 
 import fr.christopheml.aoc2023.common.Input
 

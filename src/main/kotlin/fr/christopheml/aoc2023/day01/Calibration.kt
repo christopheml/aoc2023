@@ -1,14 +1,17 @@
 package fr.christopheml.aoc2023.day01
 
+import fr.christopheml.aoc2023.common.runners.Solution
 import fr.christopheml.aoc2023.common.Input
-import com.github.christopheml.aoc2022.common.runners.Solution
 
 class Calibration: Solution<Int>(1) {
+
+    private val textNumbers = listOf("one", "two", "three", "four", "five", "six", "seven", "eight", "nine")
+        .mapIndexed { index, number -> number to index + 1 }
+        .toMap()
 
     override fun partOne(input: Input): Int {
         return input.multi
             .asSequence()
-            .map { simpleDigitIterable(it) }
             .map { digitize(it) }
             .sum()
     }
@@ -16,43 +19,43 @@ class Calibration: Solution<Int>(1) {
     override fun partTwo(input: Input): Int {
         return input.multi
             .asSequence()
-            .map { textDigitIterable(it) }
-            .map { digitize(it) }
+            .map { digitizeWithText(it) }
             .sum()
     }
 
-    private fun digitize(input: Iterable<Int>): Int {
-        return input.first() * 10 + input.last()
+    private fun digitize(input: String): Int {
+        val digits = input.filter { it.isDigit() }
+        return digits.first().digitToInt() * 10 + digits.last().digitToInt()
     }
 
-    private fun simpleDigitIterable(input: String) = Iterable {
-        input.filter { it.isDigit() }.map { it.digitToInt() }.iterator()
+    private fun digitizeWithText(input: String): Int {
+        return firstDigit(input) * 10 + lastDigit(input)
     }
 
-    private fun textDigitIterable(input: String) = Iterable {
-        iterator {
-            for (i in input.indices) {
-                if (input[i].isDigit()) {
-                    yield(input[i].digitToInt())
-                    continue
-                }
-                if (i <= input.length - 5) {
-                    if (input.startsWith("three", i)) { yield(3); continue }
-                    if (input.startsWith("seven", i)) { yield(7); continue }
-                    if (input.startsWith("eight", i)) { yield(8); continue }
-                }
-                if (i <= input.length - 4) {
-                    if (input.startsWith("four", i)) { yield(4); continue }
-                    if (input.startsWith("five", i)) { yield(5); continue }
-                    if (input.startsWith("nine", i)) { yield(9); continue }
-                }
-                if (i <= input.length - 3) {
-                    if (input.startsWith("one", i)) { yield(1); continue }
-                    if (input.startsWith("two", i)) { yield(2); continue }
-                    if (input.startsWith("six", i)) { yield(6); continue }
-                }
-            }
+    private fun firstDigit(input: String): Int {
+        for (i in input.indices) {
+            val digit = getDigit(input, i)
+            if (digit != null) return digit
         }
+        throw IllegalStateException()
+    }
+
+    private fun lastDigit(input: String): Int {
+        for (i in input.indices.reversed()) {
+            val digit = getDigit(input, i)
+            if (digit != null) return digit
+        }
+        throw IllegalStateException()
+    }
+
+    private fun getDigit(input: String, index: Int): Int? {
+        if (input[index].isDigit()) {
+            return input[index].digitToInt()
+        }
+        textNumbers.keys.forEach {
+            if (input.startsWith(it, index)) return textNumbers[it]
+        }
+        return null
     }
 
 }
