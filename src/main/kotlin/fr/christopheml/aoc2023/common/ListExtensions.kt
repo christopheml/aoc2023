@@ -1,4 +1,4 @@
-package com.github.christopheml.aoc2022.common
+package fr.christopheml.aoc2023.common
 
 fun <T> List<T>.startsWith(other: List<T>): Boolean {
     return other.indices.all { this[it] == other[it] }

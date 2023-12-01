@@ -1,4 +1,4 @@
-package com.github.christopheml.aoc2022.common
+package fr.christopheml.aoc2023.common
 
 fun String.halves(): Pair<String, String> {
     val cutPoint = this.length / 2

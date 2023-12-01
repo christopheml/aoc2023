@@ -1,4 +1,4 @@
-package com.github.christopheml.aoc2022.common
+package fr.christopheml.aoc2023.common
 
 fun IntRange.fullyOverlaps(other: IntRange): Boolean =
     this.contains(other.first) && this.contains(other.last)

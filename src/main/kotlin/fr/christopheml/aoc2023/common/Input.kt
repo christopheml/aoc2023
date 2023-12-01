@@ -1,6 +1,21 @@
-package com.github.christopheml.aoc2022.common
+package fr.christopheml.aoc2023.common
 
-class Input(day: Int) {
+class Input {
+
+    constructor(day: Int) {
+        elements = run {
+            val lines = object {}.javaClass.getResource("/inputs/day%02d.txt".format(day))!!.readText().lines()
+            if (lines.last().isEmpty()) lines.dropLast(1) else lines
+        }
+        single = SingleLineInput()
+        multi = MultiLineInput()
+    }
+
+    constructor(input: List<String>) {
+        elements = input
+        single = SingleLineInput()
+        multi = MultiLineInput()
+    }
 
     inner class SingleLineInput {
 
@@ -33,14 +48,5 @@ class Input(day: Int) {
     val single: SingleLineInput
 
     val multi: MultiLineInput
-
-    init {
-        elements = run {
-            val lines = object {}.javaClass.getResource("/inputs/day%02d.txt".format(day))!!.readText().lines()
-            if (lines.last().isEmpty()) lines.dropLast(1) else lines
-        }
-        single = SingleLineInput()
-        multi = MultiLineInput()
-    }
 
 }

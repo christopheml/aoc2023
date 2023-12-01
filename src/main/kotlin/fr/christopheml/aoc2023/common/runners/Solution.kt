@@ -1,6 +1,6 @@
 package com.github.christopheml.aoc2022.common.runners
 
-import com.github.christopheml.aoc2022.common.Input
+import fr.christopheml.aoc2023.common.Input
 
 abstract class Solution<Out>(private val day: Int) {
 
