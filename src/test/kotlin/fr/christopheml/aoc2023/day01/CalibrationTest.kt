@@ -9,14 +9,6 @@ class CalibrationTest {
     fun `Part Two official example`() {
         val input = Input(listOf("two1nine", "eightwothree", "abcone2threexyz", "xtwone3four", "4nineeightseven2", "zoneight234", "7pqrstsixteen"))
         assertThat(Calibration().partTwo(input)).isEqualTo(281)
-
-        //2, 1
-        //2
-        //1, 2
-        //2, 1, 3
-        //4, 2
-        //1, 2, 3, 4
-        //7, 6
     }
 
 }
