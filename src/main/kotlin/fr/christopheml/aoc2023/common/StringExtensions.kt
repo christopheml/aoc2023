@@ -17,8 +17,8 @@ fun String.toRange(separator: Char = '-'): IntRange {
     return IntRange(this.substring(0, cutPoint).toInt(), this.substring(cutPoint + 1).toInt())
 }
 
-fun String.asInts(separator: Char = ','): List<Int> = this.split(separator).map { it.toInt() }
+fun String.asInts(separator: Char = ','): List<Int> = this.split(separator).map { it.trim() }.filter { it.isNotBlank() }.map { it.toInt() }
 
-fun String.asLongs(separator: Char = ','): List<Long> = this.split(separator).map { it.toLong() }
+fun String.asLongs(separator: Char = ','): List<Long> = this.split(separator).map { it.trim() }.filter { it.isNotBlank() }.map { it.toLong() }
 
 fun String.split(vararg splitters: StringSplitter.Splitter) = StringSplitter.split(this, *splitters)
