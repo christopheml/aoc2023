@@ -22,9 +22,13 @@ class Seeds : Solution<Long>(5) {
     private fun seedToLocation(seed: Long, mappings: List<List<Pair<LongRange, Long>>>): Long {
         var result: Long = seed
         mappings.forEach {
-            if (result >= it.first().first.first && result <= it.last().first.last ) {
-                val transformation = it.firstOrNull { t -> result in t.first }
-                result = if (transformation == null) result else result + transformation.second
+            if (result >= it.first().first.first && result <= it.last().first.last) {
+                for (transformation in it) {
+                    if (result in transformation.first) {
+                        result += transformation.second
+                        break
+                    }
+                }
             }
         }
         return result
@@ -40,9 +44,16 @@ class Seeds : Solution<Long>(5) {
         val seeds = input.single.value.substring(7).asLongs(' ')
             .windowed(2, 2)
             .map { it[0]..(it[0] + it[1]) }
-            .toList().take(2)
+            .toList()
         val mappings = mappings(input)
-        TODO("Not implemented")
+        var minimum = Long.MAX_VALUE
+        seeds.forEachIndexed { i, range ->
+            range.forEach { seed ->
+                val location = seedToLocation(seed, mappings)
+                if (location < minimum) minimum = location
+            }
+        }
+        return minimum
     }
 }
 
