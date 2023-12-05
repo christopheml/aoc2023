@@ -27,3 +27,16 @@ fun <T> List<T>.split(separator: T): List<List<T>> {
         .map { subList(it[0] + 1, it[1]) }
         .filterNot { it.isEmpty() }
 }
+
+data class Section(val header: String, val content: List<String>)
+
+fun List<String>.sections(separatedBy: (line: String) -> Boolean): List<Section> {
+    val cuts = this.mapIndexed { index, line -> if (separatedBy(line)) index else -1 }.filter { it != -1 }
+    return cuts.windowed(2, 1, true).map {
+        val endIndex = when (it.size) {
+            1 -> this.size
+            else -> it[1]
+        }
+        Section(this[it[0]], this.subList(it[0] + 1, endIndex))
+    }
+}
