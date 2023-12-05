@@ -4,6 +4,7 @@ import fr.christopheml.aoc2023.common.Input
 import fr.christopheml.aoc2023.common.asLongs
 import fr.christopheml.aoc2023.common.runners.Solution
 import fr.christopheml.aoc2023.common.sections
+import kotlinx.coroutines.*
 
 data class MappingRange(val start: Long, val end: Long, val offset: Long)
 
@@ -58,15 +59,22 @@ class Seeds : Solution<Long>(5) {
             .map { it[0]..(it[0] + it[1]) }
             .toList()
         val mappings = mappings(input)
-        var minimum = Long.MAX_VALUE
-        seeds.forEachIndexed { i, range ->
-            range.forEach { seed ->
-                val location = seedToLocation(seed, mappings)
-                if (location < minimum) minimum = location
+        return runBlocking {
+            coroutineScope {
+                seeds.map { range ->
+                    async {
+                        var minimum = Long.MAX_VALUE
+                        range.forEach { seed ->
+                            val location = seedToLocation(seed, mappings)
+                            if (location < minimum) minimum = location
+                        }
+                        minimum
+                    }
+                }.awaitAll().min()
             }
         }
-        return minimum
     }
+
 }
 
 fun main() {
