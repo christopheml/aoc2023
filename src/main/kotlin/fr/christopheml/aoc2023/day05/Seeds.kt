@@ -5,13 +5,32 @@ import fr.christopheml.aoc2023.common.asLongs
 import fr.christopheml.aoc2023.common.runners.Solution
 import fr.christopheml.aoc2023.common.sections
 
+data class MappingRange(val start: Long, val end: Long, val offset: Long)
+
+class Mapping(mappingRanges: List<MappingRange>) {
+
+    private val sortedMappingRanges: List<MappingRange> = mappingRanges.sortedBy { it.start }
+    private val boundaries = sortedMappingRanges.first().start..sortedMappingRanges.last().end
+
+    fun apply(value: Long): Long {
+        if (value !in boundaries) return value
+        for (mapping in sortedMappingRanges) {
+            if (value >= mapping.start && value <= mapping.end) return value + mapping.offset
+        }
+        return value
+    }
+
+}
+
 class Seeds : Solution<Long>(5) {
 
-    private fun toMapping(lines: List<String>) = lines.map {
-        val (destinationRangeStart, sourceRangeStart, steps) = it.asLongs(' ')
-        val offset = destinationRangeStart - sourceRangeStart
-        sourceRangeStart..<(sourceRangeStart + steps) to offset
-    }.sortedBy { it.first.first }
+    private fun toMapping(lines: List<String>) = Mapping(
+        lines.map {
+            val (destinationRangeStart, sourceRangeStart, steps) = it.asLongs(' ')
+            val offset = destinationRangeStart - sourceRangeStart
+            MappingRange(sourceRangeStart, sourceRangeStart + steps - 1, offset)
+        }
+    )
 
     private fun mappings(input: Input) = input.multi.asList()
         .filterNot { it.isBlank() }
@@ -19,17 +38,10 @@ class Seeds : Solution<Long>(5) {
         .sections { it.endsWith(":") }
         .map { toMapping(it.content) }
 
-    private fun seedToLocation(seed: Long, mappings: List<List<Pair<LongRange, Long>>>): Long {
+    private fun seedToLocation(seed: Long, mappings: List<Mapping>): Long {
         var result: Long = seed
         mappings.forEach {
-            if (result >= it.first().first.first && result <= it.last().first.last) {
-                for (transformation in it) {
-                    if (result in transformation.first) {
-                        result += transformation.second
-                        break
-                    }
-                }
-            }
+            result = it.apply(result)
         }
         return result
     }
@@ -37,7 +49,7 @@ class Seeds : Solution<Long>(5) {
     override fun partOne(input: Input): Long {
         val seeds = input.single.value.substring(7).asLongs(' ')
         val mappings = mappings(input)
-        return seeds.map {seedToLocation(it, mappings) }.min()
+        return seeds.map { seedToLocation(it, mappings) }.min()
     }
 
     override fun partTwo(input: Input): Long {
