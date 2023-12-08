@@ -17,7 +17,7 @@ class Calibration : Solution<Int>(1) {
 
     override fun partTwo(input: Input): Int {
         return input.multi.asSequence()
-            .map {findDigit(it, it.indices, literals) * 10 + findDigit(it, it.indices.reversed(), literals) }
+            .map { findDigit(it, it.indices, literals) * 10 + findDigit(it, it.indices.reversed(), literals) }
             .sum()
     }
 

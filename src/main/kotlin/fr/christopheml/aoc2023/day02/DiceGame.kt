@@ -2,6 +2,8 @@ package fr.christopheml.aoc2023.day02
 
 import fr.christopheml.aoc2023.common.Input
 import fr.christopheml.aoc2023.common.runners.Solution
+import fr.christopheml.aoc2023.common.toPair
+import fr.christopheml.aoc2023.common.toSequence
 import kotlin.math.max
 
 class DiceGame : Solution<Int>(2) {
@@ -35,14 +37,13 @@ data class Game(val number: Int, val draws: List<Draw>) {
 data class Draw(val red: Int, val green: Int, val blue: Int)
 
 fun parseGame(input: String) : Game {
-    val colon = input.indexOf(":")
-    val gameNumber = input.substring(5, colon).toInt()
-    val draws = input.substring(colon + 2).split("; ").map { parseDraw(it) }
-    return Game(gameNumber, draws)
+    val (gameNumber, gameLog) = input.toPair(": ", prefix = "Game ")
+    val draws = gameLog.splitToSequence("; ").map { parseDraw(it) }.toList()
+    return Game(gameNumber.toInt(), draws)
 }
 
 fun parseDraw(draw: String) : Draw {
-    val values = draw.split(", ").map { it.split(" ") }.associate { it[1] to it[0].toInt() }
+    val values = draw.splitToSequence(", ").map { it.split(" ") }.associate { it[1] to it[0].toInt() }
     return Draw(
         values.getOrDefault("red", 0),
         values.getOrDefault("green", 0),
