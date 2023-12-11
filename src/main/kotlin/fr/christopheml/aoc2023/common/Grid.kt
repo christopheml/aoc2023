@@ -92,6 +92,19 @@ class Grid<T>(private val lines: List<List<T>>) {
         )
     }
 
+    /**
+     * Returns a [Sequence] of [points][Point] matching the given predicate.
+     *
+     * This is more efficient than calling [points] then [Sequence.filter].
+     */
+    fun filter(predicate: (T) -> Boolean) = sequence {
+        for (x in verticalIndices) {
+            for (y in horizontalIndices) {
+                if (predicate(get(x, y))) yield(Point(x, y))
+            }
+        }
+    }
+
     fun toList() = lines
 
     fun line(index: Int) = lines[index].asSequence()

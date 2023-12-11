@@ -14,7 +14,6 @@ class CosmicExpansion(private val customExpansionFactor: Long = 1000000) : Solut
         LongPoint(x + expandingLines.count { it < x } * (factor - 1),
             y + expandingColumns.count { it < y } * (factor - 1))
 
-
     private fun grid(input: Input) =
         Grid(input.multi.asList().map { it.map { c -> if (c == '#') Space.Galaxy else Space.Void } })
 
@@ -34,8 +33,7 @@ class CosmicExpansion(private val customExpansionFactor: Long = 1000000) : Solut
 
     private fun galaxies(
         grid: Grid<Space>, expandingLines: List<Int>, expandingColumns: List<Int>, expansionFactor: Long
-    ) = grid.points()
-        .filter { grid[it] == Space.Galaxy }
+    ) = grid.filter { it == Space.Galaxy }
         .map { it.toLongPoint() }
         .map { it.expand(expandingLines, expandingColumns, expansionFactor) }.toList()
 
