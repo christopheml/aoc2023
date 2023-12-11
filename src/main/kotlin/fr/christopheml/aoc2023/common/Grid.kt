@@ -1,5 +1,7 @@
 package fr.christopheml.aoc2023.common
 
+import kotlin.math.abs
+
 data class Point(val x: Int, val y: Int) {
 
     fun top() = Point(x - 1, y)
@@ -21,24 +23,54 @@ data class Point(val x: Int, val y: Int) {
 
     fun allNeighbors() = listOf(top(), topRight(), right(), bottomRight(), bottom(), bottomLeft(), left(), topLeft())
 
+    fun distanceFrom(other: Point) = abs(x - other.x) + abs(y - other.y)
+
+    fun toLongPoint() = LongPoint(x.toLong(), y.toLong())
+
 }
+
+data class LongPoint(val x: Long, val y: Long) {
+
+    fun top() = LongPoint(x - 1, y)
+    fun bottom() = LongPoint(x + 1, y)
+
+    fun left() = LongPoint(x, y - 1)
+
+    fun right() = LongPoint(x, y + 1)
+
+    fun topLeft() = LongPoint(x - 1, y - 1)
+
+    fun topRight() = LongPoint(x - 1, y + 1)
+
+    fun bottomLeft() = LongPoint(x + 1, y - 1)
+
+    fun bottomRight() = LongPoint(x + 1, y + 1)
+
+    fun directNeighbors() = listOf(top(), right(), bottom(), left())
+
+    fun allNeighbors() = listOf(top(), topRight(), right(), bottomRight(), bottom(), bottomLeft(), left(), topLeft())
+
+    fun distanceFrom(other: LongPoint) = abs(x - other.x) + abs(y - other.y)
+
+}
+
 
 class Grid<T>(private val lines: List<List<T>>) {
 
     val width = lines[0].size
     val height = lines.size
-    private val horizontalRange = 0..<width
-    private val verticalRange = 0..<height
+    val horizontalIndices = 0..<width
+    val verticalIndices = 0..<height
 
     val size = width * height
 
-    private fun inRange(line: Int, column: Int) = line in verticalRange && column in horizontalRange
+    private fun inRange(line: Int, column: Int) = line in verticalIndices && column in horizontalIndices
 
     private fun inRange(point: Point) = inRange(point.x, point.y)
 
     fun points() = sequence {
-        for (x in verticalRange) {
-            for (y in horizontalRange) {
+        for (x in verticalIndices) {
+            for (y in horizontalIndices) {
                 yield(Point(x, y))
             }
         }
@@ -62,6 +94,14 @@ class Grid<T>(private val lines: List<List<T>>) {
 
     fun toList() = lines
 
+    fun line(index: Int) = lines[index].asSequence()
+
+    fun column(index: Int) = sequence {
+        for (x in verticalIndices) {
+            yield(lines[x][index])
+        }
+    }
+
     fun directNeighbors(point: Point) = point.directNeighbors().filter { inRange(it) }
 
     fun allNeighbors(point: Point) = point.allNeighbors().filter { inRange(it) }
@@ -74,8 +114,8 @@ class Grid<T>(private val lines: List<List<T>>) {
      * Returns the coordinates of the first occurrence of the given element
      */
     fun first(element: T): Point {
-        for (line in verticalRange) {
-            for (column in horizontalRange) {
+        for (line in verticalIndices) {
+            for (column in horizontalIndices) {
                 if (lines[line][column] == element) return Point(line, column)
             }
         }
