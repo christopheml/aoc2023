@@ -31,7 +31,7 @@ class EngineSchematic(private val data: List<String>) {
         }
             .groupBy({ it.second!! }, { it.first })
             .filterValues { it.size == 2 }
-    private fun nearby(line: Int, range: IntRange) = iterator {
+    private fun nearby(line: Int, range: IntRange) = sequence {
         val extendedRange = range.first - 1..range.last + 1
         yield(Coordinate(line, range.first - 1))
         yield(Coordinate(line, range.last + 1))
@@ -39,7 +39,7 @@ class EngineSchematic(private val data: List<String>) {
             yield(Coordinate(line - 1, it))
             yield(Coordinate(line + 1, it))
         }
-    }.asSequence()
+    }
 
     private fun hasNearbySymbol(line: Int, range: IntRange) = nearby(line, range).any { isSymbol(it.line, it.column) }
 
