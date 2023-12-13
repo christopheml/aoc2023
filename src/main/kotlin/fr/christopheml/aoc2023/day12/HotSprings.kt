@@ -19,7 +19,16 @@ class HotSprings : Solution<Long>(12) {
 
     private fun minimumSizeOfRecords(groups: List<Int>) = groups.sum() + groups.size - 1
 
+    private val cache = HashMap<Pair<String, List<Int>>, Long>()
+
+    fun cacheAndReturn(records: String, groups: List<Int>, result: Long): Long {
+        cache[Pair(records, groups)] = result
+        return result
+    }
+
     fun arrangements(records: String, groups: List<Int>, depth: Int, log: String): Long {
+        val cacheKey = Pair(records, groups)
+        if (cache[cacheKey] != null) return cache[cacheKey]!!
         println("  ".repeat(depth) + "arr('$records', $groups) [$log]")
 
         // Petite optimisation (uniquement valide sur la fin)
@@ -28,7 +37,7 @@ class HotSprings : Solution<Long>(12) {
         // Condition de retour
         if (groups.isEmpty()) return if (records.count { it == '#' } == 0) 1L else 0
 
-        return when (records[0]) {
+        return cacheAndReturn(records, groups, when (records[0]) {
             '.' -> {
                 val skipTo = min(records.indexOfFirst { it != '.' }, records.length - 1)
                 arrangements(records.drop(skipTo), groups, depth + 1, "skip $skipTo")
@@ -41,7 +50,7 @@ class HotSprings : Solution<Long>(12) {
                 arrangements(records.drop(1), groups, depth + 1, "skip") +
                         if (canEat(records, groups[0])) arrangements(eat(records, groups[0]), groups.drop(1), depth + 1, "eat") else 0L
             }
-        }
+        })
     }
 
     fun arrangements(records: String, groups: List<Int>): Long = arrangements(records, groups, 0, "init")
