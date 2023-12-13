@@ -55,7 +55,7 @@ data class LongPoint(val x: Long, val y: Long) {
 }
 
 
-class Grid<T>(private val lines: List<List<T>>) {
+class Grid<T>(val lines: List<List<T>>) {
 
     val width = lines[0].size
     val height = lines.size
@@ -114,6 +114,10 @@ class Grid<T>(private val lines: List<List<T>>) {
             yield(lines[x][index])
         }
     }
+
+    fun transpose() = Grid(
+        horizontalIndices.map { column(it).toList() }.toList()
+    )
 
     fun directNeighbors(point: Point) = point.directNeighbors().filter { inRange(it) }
 
