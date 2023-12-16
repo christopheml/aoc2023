@@ -54,6 +54,24 @@ data class LongPoint(val x: Long, val y: Long) {
 
 }
 
+enum class Direction {
+    Top {
+        override fun next(point: Point) = point.top()
+    },
+    Right {
+        override fun next(point: Point) = point.right()
+    },
+    Bottom {
+        override fun next(point: Point) = point.bottom()
+    },
+    Left {
+        override fun next(point: Point) = point.left()
+    };
+
+    abstract fun next(point: Point): Point
+
+}
+
 
 class Grid<T>(val lines: List<List<T>>) {
 
@@ -66,7 +84,7 @@ class Grid<T>(val lines: List<List<T>>) {
 
     private fun inRange(line: Int, column: Int) = line in verticalIndices && column in horizontalIndices
 
-    private fun inRange(point: Point) = inRange(point.x, point.y)
+    fun inRange(point: Point) = inRange(point.x, point.y)
 
     fun points() = sequence {
         for (x in verticalIndices) {
@@ -137,6 +155,11 @@ class Grid<T>(val lines: List<List<T>>) {
             }
         }
         throw NoSuchElementException("Element '$element' not found in the grid")
+    }
+
+    fun next(point: Point, direction: Direction): Point? {
+        val next = direction.next(point)
+        return if (inRange(next)) next else null
     }
 
 }
