@@ -21,12 +21,14 @@ fun <T> List<T>.indexOfList(other: List<T>): Int {
         ?: -1
 }
 
-fun <T> List<T>.split(separator: T): List<List<T>> {
+fun <T> List<T>.splitKeepingEmpty(separator: T): List<List<T>> {
     val cuts = listOf(-1) + indices.filter { this[it] == separator } + listOf(size)
     return cuts.windowed(2)
         .map { subList(it[0] + 1, it[1]) }
-        .filterNot { it.isEmpty() }
 }
+
+fun <T> List<T>.split(separator: T): List<List<T>> = splitKeepingEmpty(separator).filterNot { it.isEmpty() }
+
 
 data class Section(val header: String, val content: List<String>)
 
